@@ -34,3 +34,28 @@ double Estadisticas::desviacionEstandar(const vector<double>& datos) {
 
     return sqrt(suma / datos.size());
 }
+
+// Calcula el percentil p de un conjunto de datos
+double Estadisticas::percentil(vector<double> datos, double p) {
+
+    if (datos.empty()) return 0;
+
+    // Ordenamos los datos
+    sort(datos.begin(), datos.end());
+
+    // Fórmula de posición
+    double posicion = (p / 100.0) * (datos.size() - 1);
+
+    int indiceInferior = floor(posicion);
+    int indiceSuperior = ceil(posicion);
+
+    // Si ambos índices son iguales, devolvemos el valor directo
+    if (indiceInferior == indiceSuperior)
+        return datos[indiceInferior];
+
+    // Interpolación lineal si no es entero
+    double fraccion = posicion - indiceInferior;
+
+    return datos[indiceInferior] +
+           fraccion * (datos[indiceSuperior] - datos[indiceInferior]);
+}

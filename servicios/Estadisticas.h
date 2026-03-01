@@ -19,6 +19,9 @@ public:
 
     // Calcula la desviación estándar
     static double desviacionEstandar(const vector<double>& datos);
+
+    // Calcula el percentil indicado (ej: 25, 50, 75)
+    static double percentil(vector<double> datos, double p);
 };
 
 #endif
