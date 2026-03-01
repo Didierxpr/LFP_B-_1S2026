@@ -239,49 +239,78 @@ void SistemaAcademico::reporteReprobacion() {
     ReporteHTML::generarReporte(html, "Reporte_Reprobacion.html");
 }
 // Genera análisis general por carrera en HTML
+// Genera análisis completo por carrera en formato HTML
 void SistemaAcademico::reportePorCarrera() {
 
-    if (estudiantes.empty() || notas.empty()) {
-        cout << "Debe cargar estudiantes y notas primero." << endl;
+    if (estudiantes.empty() || notas.empty() || cursos.empty()) {
+        cout << "Debe cargar estudiantes, cursos y notas primero." << endl;
         return;
     }
 
     vector<string> carreras;
 
+    // Obtener carreras únicas
     for (const Estudiante& e : estudiantes) {
         if (find(carreras.begin(), carreras.end(), e.carrera) == carreras.end())
             carreras.push_back(e.carrera);
     }
 
     string html = "<h1>Analisis por Carrera</h1>";
-    html += "<table>";
-    html += "<tr><th>Carrera</th><th>Total Estudiantes</th><th>Promedio General</th></tr>";
 
     for (const string& carrera : carreras) {
 
         int totalEst = 0;
         vector<double> notasCarrera;
+        int cursosDisponibles = 0;
 
+        // Conteo de estudiantes y recolección de notas
         for (const Estudiante& e : estudiantes) {
             if (e.carrera == carrera) {
                 totalEst++;
 
-                for (const Nota& n : notas)
+                for (const Nota& n : notas) {
                     if (n.carnet == e.carnet)
                         notasCarrera.push_back(n.nota);
+                }
             }
+        }
+
+        // Conteo de cursos disponibles para esa carrera
+        for (const Curso& c : cursos) {
+            if (c.carrera == carrera)
+                cursosDisponibles++;
         }
 
         double promedio = Estadisticas::promedio(notasCarrera);
 
-        html += "<tr>";
-        html += "<td>" + carrera + "</td>";
-        html += "<td>" + to_string(totalEst) + "</td>";
-        html += "<td>" + to_string(promedio) + "</td>";
-        html += "</tr>";
-    }
+        // Distribución por semestre
+        vector<int> distribucion(11, 0); // Índice 1–10
 
-    html += "</table>";
+        for (const Estudiante& e : estudiantes) {
+            if (e.carrera == carrera)
+                distribucion[e.semestre]++;
+        }
+
+        html += "<h2>" + carrera + "</h2>";
+        html += "<p><strong>Total Estudiantes:</strong> " + to_string(totalEst) + "</p>";
+        html += "<p><strong>Promedio General:</strong> " + to_string(promedio) + "</p>";
+        html += "<p><strong>Cursos Disponibles:</strong> " + to_string(cursosDisponibles) + "</p>";
+
+        html += "<h3>Distribucion por Semestre</h3>";
+        html += "<table>";
+        html += "<tr><th>Semestre</th><th>Cantidad</th></tr>";
+
+        for (int i = 1; i <= 10; i++) {
+            if (distribucion[i] > 0) {
+                html += "<tr>";
+                html += "<td>" + to_string(i) + "</td>";
+                html += "<td>" + to_string(distribucion[i]) + "</td>";
+                html += "</tr>";
+            }
+        }
+
+        html += "</table><br>";
+    }
 
     ReporteHTML::generarReporte(html, "Reporte_Analisis_Carrera.html");
 }
