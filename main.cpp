@@ -24,23 +24,43 @@ int main() {
         cout << "Seleccione una opcion: ";
         cin >> opcion;
 
-        // Controla el flujo del programa según la opción seleccionada
         switch (opcion) {
             case 1:
                 sistema.cargarEstudiantes("data/estudiantes.lfp");
                 break;
+
             case 2:
                 sistema.cargarCursos("data/cursos.lfp");
                 break;
+
             case 3:
                 sistema.cargarNotas("data/notas.lfp");
                 break;
+
             case 4:
                 sistema.reporteEstadisticasCurso();
                 break;
+
+            case 5:
+                sistema.reporteRendimientoEstudiante();
+                break;
+
+            case 6:
+                sistema.reporteTop10();
+                break;
+
+            case 7:
+                sistema.reporteReprobacion();
+                break;
+
+            case 8:
+                sistema.reportePorCarrera();
+                break;
+
             case 9:
                 cout << "Saliendo del sistema..." << endl;
                 break;
+
             default:
                 cout << "Opcion invalida." << endl;
         }
